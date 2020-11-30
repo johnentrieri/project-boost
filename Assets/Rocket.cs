@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Rocket : MonoBehaviour
 {
-    Rigidbody rigidBody; 
+    private Rigidbody rigidBody;
+
+    private float upThrust = 1.5f;
+    private float rotThrust = 0.3f;
 
     // Start is called before the first frame update
     void Start() {
@@ -18,15 +21,15 @@ public class Rocket : MonoBehaviour
 
     private void ProcessInput() {
         if (Input.GetKey(KeyCode.Space)) {
-            rigidBody.AddRelativeForce(Vector3.up);
+            rigidBody.AddRelativeForce(upThrust * Vector3.up);
         }
 
         if (Input.GetKey(KeyCode.A)) {
-            print("Rotate Left");
+            transform.Rotate(rotThrust * Vector3.forward);
         }
 
         if (Input.GetKey(KeyCode.D)) {
-            print("Rotate Right");
+            transform.Rotate(rotThrust * Vector3.back);
         }
     }
 }
