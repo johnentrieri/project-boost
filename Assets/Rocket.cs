@@ -9,6 +9,9 @@ public class Rocket : MonoBehaviour
     private AudioSource audioSource;
     private Vector3 startPosition;
     private Quaternion startRotation;
+    enum State { Alive, Transcending, Dying};
+    private State state;
+    
     [SerializeField] float upThrust = 2.7f;
     [SerializeField] float rotThrust = 120.0f;
 
@@ -22,30 +25,44 @@ public class Rocket : MonoBehaviour
 
         audioSource = GetComponent<AudioSource>();
 
+        state = State.Alive;
     }
 
     // Update is called once per frame
     void Update() {
-        Thrust();
-        Rotate();
-        if (Input.GetKey(KeyCode.R)) {
-            ResetPosition();
+        if (state == State.Alive) {
+            Thrust();
+            Rotate();
+            if (Input.GetKey(KeyCode.R)) {
+                ResetPosition();
+            }
         }
     }
 
     void OnCollisionEnter(Collision collision)
     {
+        if (state != State.Alive) { return; }
+        
         switch (collision.gameObject.tag) {
             case "Friendly":
                 //do nothing
                 break;
             case "Finish":
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+                state = State.Transcending;
+                audioSource.Stop();
+                Invoke("LoadNextLevel", 2.0f);
                 break;
             default:
-                ResetPosition();
+                state = State.Dying;
+                audioSource.Stop();
+                Invoke("ResetPosition", 2.0f);
                 break;
         }
+
+    }
+
+    private void LoadNextLevel() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
     private void Rotate() {
@@ -81,5 +98,6 @@ public class Rocket : MonoBehaviour
     private void ResetPosition() {
         rigidBody.velocity = Vector3.zero;
         transform.SetPositionAndRotation(startPosition,startRotation);
+        state = State.Alive;
     }
 }
