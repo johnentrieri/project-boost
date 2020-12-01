@@ -6,12 +6,17 @@ public class Rocket : MonoBehaviour
 {
     private Rigidbody rigidBody;
     private AudioSource audioSource;
+    private Vector3 startPosition;
+    private Quaternion startRotation;
 
-    [SerializeField] float upThrust = 3.0f;
-    [SerializeField] float rotThrust = 100.0f;
+    [SerializeField] float upThrust = 2.7f;
+    [SerializeField] float rotThrust = 120.0f;
 
     // Start is called before the first frame update
     void Start() {
+
+        startPosition = transform.position;
+
         rigidBody = GetComponent<Rigidbody>();
         rigidBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY;
 
@@ -22,6 +27,7 @@ public class Rocket : MonoBehaviour
     void Update() {
         Thrust();
         Rotate();
+        ResetPosition();
     }
 
     void OnCollisionEnter(Collision collision)
@@ -30,7 +36,7 @@ public class Rocket : MonoBehaviour
             case "Friendly":
                 break;
             default:
-                Destroy(gameObject);
+                //Destroy(gameObject);
                 break;
         }
     }
@@ -63,5 +69,11 @@ public class Rocket : MonoBehaviour
             if (Input.GetKeyUp(KeyCode.Space)) {
                 audioSource.Pause();
             }
+    }
+
+    private void ResetPosition() {
+        if (Input.GetKey(KeyCode.R)) {
+            transform.SetPositionAndRotation(startPosition,startRotation);
+        }
     }
 }
