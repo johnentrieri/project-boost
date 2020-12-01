@@ -276,7 +276,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 969970318591873252, guid: 2eb591308cc9f684697368227c0ddfd4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -30
+      value: -44.41
       objectReference: {fileID: 0}
     - target: {fileID: 969970318591873252, guid: 2eb591308cc9f684697368227c0ddfd4, type: 3}
       propertyPath: m_LocalPosition.y
@@ -447,7 +447,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4058381190721872425, guid: 5d4a5320d2895cb4295ff4ffa31fd5d2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -30
+      value: -44.41
       objectReference: {fileID: 0}
     - target: {fileID: 4058381190721872425, guid: 5d4a5320d2895cb4295ff4ffa31fd5d2, type: 3}
       propertyPath: m_LocalPosition.y
@@ -735,7 +735,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4784449026577422623, guid: 26ed6253ef97ef54889477b0e73b6fd7, type: 3}
       propertyPath: m_Name
-      value: Win Platform
+      value: Landing Pad
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 26ed6253ef97ef54889477b0e73b6fd7, type: 3}

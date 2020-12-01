@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour
 {
@@ -8,7 +9,6 @@ public class Rocket : MonoBehaviour
     private AudioSource audioSource;
     private Vector3 startPosition;
     private Quaternion startRotation;
-
     [SerializeField] float upThrust = 2.7f;
     [SerializeField] float rotThrust = 120.0f;
 
@@ -21,22 +21,29 @@ public class Rocket : MonoBehaviour
         rigidBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY;
 
         audioSource = GetComponent<AudioSource>();
+
     }
 
     // Update is called once per frame
     void Update() {
         Thrust();
         Rotate();
-        ResetPosition();
+        if (Input.GetKey(KeyCode.R)) {
+            ResetPosition();
+        }
     }
 
     void OnCollisionEnter(Collision collision)
     {
         switch (collision.gameObject.tag) {
             case "Friendly":
+                //do nothing
+                break;
+            case "Finish":
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
                 break;
             default:
-                //Destroy(gameObject);
+                ResetPosition();
                 break;
         }
     }
@@ -72,8 +79,7 @@ public class Rocket : MonoBehaviour
     }
 
     private void ResetPosition() {
-        if (Input.GetKey(KeyCode.R)) {
-            transform.SetPositionAndRotation(startPosition,startRotation);
-        }
+        rigidBody.velocity = Vector3.zero;
+        transform.SetPositionAndRotation(startPosition,startRotation);
     }
 }
