@@ -275,14 +275,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 115092775, guid: 2eb591308cc9f684697368227c0ddfd4, type: 3}
-      propertyPath: upThrust
-      value: 2.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 115092775, guid: 2eb591308cc9f684697368227c0ddfd4, type: 3}
-      propertyPath: rotThrust
-      value: 120
-      objectReference: {fileID: 0}
     - target: {fileID: 969970318591873252, guid: 2eb591308cc9f684697368227c0ddfd4, type: 3}
       propertyPath: m_RootOrder
       value: 1

@@ -6,14 +6,15 @@ using UnityEngine.SceneManagement;
 public class Rocket : MonoBehaviour
 {
     private Rigidbody rigidBody;
-    private AudioSource audioSource;
+    private AudioSource thrustSound;
+    private AudioSource explosionSound;
+    private AudioSource transcendSound;
     private Vector3 startPosition;
     private Quaternion startRotation;
     enum State { Alive, Transcending, Dying};
     private State state;
-    
-    [SerializeField] float upThrust = 2.7f;
-    [SerializeField] float rotThrust = 120.0f;
+    private float rotThrust;
+    private float upThrust;
 
     // Start is called before the first frame update
     void Start() {
@@ -23,9 +24,23 @@ public class Rocket : MonoBehaviour
         rigidBody = GetComponent<Rigidbody>();
         rigidBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY;
 
-        audioSource = GetComponent<AudioSource>();
+        thrustSound = GetComponents<AudioSource>()[0];
+        explosionSound = GetComponents<AudioSource>()[1];
+        transcendSound = GetComponents<AudioSource>()[2];
 
         state = State.Alive;
+
+        rotThrust = 120.0f;
+        upThrust = 2.7f;
+       
+        #if UNITY_WEBGL
+            upThrust = 20.0f;
+        #endif
+
+        #if UNITY_EDITOR
+            upThrust = 2.7f;
+        #endif
+        
     }
 
     // Update is called once per frame
@@ -42,19 +57,21 @@ public class Rocket : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         if (state != State.Alive) { return; }
-        
+
         switch (collision.gameObject.tag) {
             case "Friendly":
                 //do nothing
                 break;
             case "Finish":
                 state = State.Transcending;
-                audioSource.Stop();
+                thrustSound.Stop();
+                transcendSound.Play();
                 Invoke("LoadNextLevel", 2.0f);
                 break;
             default:
                 state = State.Dying;
-                audioSource.Stop();
+                thrustSound.Stop();
+                explosionSound.Play();
                 Invoke("ResetPosition", 2.0f);
                 break;
         }
@@ -62,6 +79,7 @@ public class Rocket : MonoBehaviour
     }
 
     private void LoadNextLevel() {
+        transcendSound.Stop();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
@@ -87,15 +105,16 @@ public class Rocket : MonoBehaviour
             }
 
             if (Input.GetKeyDown(KeyCode.Space)) {
-                audioSource.Play();
+                thrustSound.Play();
             }
 
             if (Input.GetKeyUp(KeyCode.Space)) {
-                audioSource.Pause();
+                thrustSound.Pause();
             }
     }
 
     private void ResetPosition() {
+        explosionSound.Stop();
         rigidBody.velocity = Vector3.zero;
         transform.SetPositionAndRotation(startPosition,startRotation);
         state = State.Alive;
