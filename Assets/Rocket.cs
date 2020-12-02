@@ -6,15 +6,13 @@ using UnityEngine.SceneManagement;
 public class Rocket : MonoBehaviour
 {
     private Rigidbody rigidBody;
-    private AudioSource thrustSound;
-    private AudioSource explosionSound;
-    private AudioSource transcendSound;
+    private AudioSource thrustSound, explosionSound, transcendSound;
     private Vector3 startPosition;
     private Quaternion startRotation;
     enum State { Alive, Transcending, Dying};
     private State state;
-    private float rotThrust;
-    private float upThrust;
+    private float upThrust, rotThrust;
+    [SerializeField] ParticleSystem thrusterParticles, successParticles, deathParticles;
 
     // Start is called before the first frame update
     void Start() {
@@ -39,18 +37,15 @@ public class Rocket : MonoBehaviour
 
         #if UNITY_EDITOR
             upThrust = 2.7f;
-        #endif
-        
+        #endif      
     }
 
     // Update is called once per frame
     void Update() {
         if (state == State.Alive) {
-            Thrust();
-            Rotate();
-            if (Input.GetKey(KeyCode.R)) {
-                ResetPosition();
-            }
+            ThrustHandler();
+            RotateHandler();
+            DebugHandler();
         }
     }
 
@@ -66,16 +61,25 @@ public class Rocket : MonoBehaviour
                 state = State.Transcending;
                 thrustSound.Stop();
                 transcendSound.Play();
+                successParticles.Play();
                 Invoke("LoadNextLevel", 2.0f);
                 break;
             default:
                 state = State.Dying;
                 thrustSound.Stop();
                 explosionSound.Play();
+                deathParticles.Play();
                 Invoke("ResetPosition", 2.0f);
                 break;
         }
 
+    }
+
+    private void DebugHandler() {
+        if (Input.GetKey(KeyCode.R)) { ResetPosition(); }
+        if (Input.GetKey(KeyCode.Alpha1)) SceneManager.LoadScene(0);
+        if (Input.GetKey(KeyCode.Alpha2)) SceneManager.LoadScene(1);
+        if (Input.GetKey(KeyCode.Alpha3)) SceneManager.LoadScene(2);    
     }
 
     private void LoadNextLevel() {
@@ -83,7 +87,7 @@ public class Rocket : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
-    private void Rotate() {
+    private void RotateHandler() {
 
         rigidBody.constraints = RigidbodyConstraints.FreezeRotation;
         float frameRotation = rotThrust * Time.deltaTime;
@@ -99,18 +103,23 @@ public class Rocket : MonoBehaviour
         rigidBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY;
     }
 
-    private void Thrust() {
+    private void ThrustHandler() {
+
+        //Space Key Thrusts
         if (Input.GetKey(KeyCode.Space)) {
-                rigidBody.AddRelativeForce(upThrust * Vector3.up);
-            }
+            rigidBody.AddRelativeForce(upThrust * Vector3.up);
+        }
 
-            if (Input.GetKeyDown(KeyCode.Space)) {
-                thrustSound.Play();
-            }
+        //Play/Pause Thrust Sound
+        if (Input.GetKeyDown(KeyCode.Space)) { 
+            thrustSound.Play(); 
+            thrusterParticles.Play();
+        }
 
-            if (Input.GetKeyUp(KeyCode.Space)) {
-                thrustSound.Pause();
-            }
+        if (Input.GetKeyUp(KeyCode.Space)) { 
+            thrustSound.Pause(); 
+            thrusterParticles.Stop();
+        }
     }
 
     private void ResetPosition() {
