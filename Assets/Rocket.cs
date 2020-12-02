@@ -60,6 +60,7 @@ public class Rocket : MonoBehaviour
             case "Finish":
                 state = State.Transcending;
                 thrustSound.Stop();
+                thrusterParticles.Stop();
                 transcendSound.Play();
                 successParticles.Play();
                 Invoke("LoadNextLevel", 2.0f);
@@ -67,6 +68,7 @@ public class Rocket : MonoBehaviour
             default:
                 state = State.Dying;
                 thrustSound.Stop();
+                thrusterParticles.Stop();
                 explosionSound.Play();
                 deathParticles.Play();
                 Invoke("ResetPosition", 2.0f);
@@ -76,10 +78,11 @@ public class Rocket : MonoBehaviour
     }
 
     private void DebugHandler() {
-        if (Input.GetKey(KeyCode.R)) { ResetPosition(); }
-        if (Input.GetKey(KeyCode.Alpha1)) SceneManager.LoadScene(0);
-        if (Input.GetKey(KeyCode.Alpha2)) SceneManager.LoadScene(1);
-        if (Input.GetKey(KeyCode.Alpha3)) SceneManager.LoadScene(2);    
+        if (Input.GetKeyDown(KeyCode.R)) ResetPosition();
+        if (Input.GetKeyDown(KeyCode.Alpha1)) SceneManager.LoadScene(0);
+        if (Input.GetKeyDown(KeyCode.Alpha2)) SceneManager.LoadScene(1);
+        if (Input.GetKeyDown(KeyCode.Alpha3)) SceneManager.LoadScene(2);
+        if (Input.GetKeyDown(KeyCode.Alpha4)) SceneManager.LoadScene(3);
     }
 
     private void LoadNextLevel() {
