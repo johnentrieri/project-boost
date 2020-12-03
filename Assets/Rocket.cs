@@ -12,6 +12,7 @@ public class Rocket : MonoBehaviour
     enum State { Alive, Transcending, Dying};
     private State state;
     private float upThrust, rotThrust;
+    private bool collisionsDisabled;
     [SerializeField] ParticleSystem thrusterParticles, successParticles, deathParticles;
 
     // Start is called before the first frame update
@@ -27,6 +28,7 @@ public class Rocket : MonoBehaviour
         transcendSound = GetComponents<AudioSource>()[2];
 
         state = State.Alive;
+        collisionsDisabled = false;
 
         rotThrust = 120.0f;
         upThrust = 2.7f;
@@ -45,13 +47,13 @@ public class Rocket : MonoBehaviour
         if (state == State.Alive) {
             ThrustHandler();
             RotateHandler();
-            DebugHandler();
+            if (Debug.isDebugBuild) { DebugHandler(); }
         }
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        if (state != State.Alive) { return; }
+        if (state != State.Alive || collisionsDisabled) { return; }
 
         switch (collision.gameObject.tag) {
             case "Friendly":
@@ -79,15 +81,18 @@ public class Rocket : MonoBehaviour
 
     private void DebugHandler() {
         if (Input.GetKeyDown(KeyCode.R)) ResetPosition();
+        if (Input.GetKeyDown(KeyCode.C)) toggleCollisions();
         if (Input.GetKeyDown(KeyCode.Alpha1)) SceneManager.LoadScene(0);
         if (Input.GetKeyDown(KeyCode.Alpha2)) SceneManager.LoadScene(1);
         if (Input.GetKeyDown(KeyCode.Alpha3)) SceneManager.LoadScene(2);
         if (Input.GetKeyDown(KeyCode.Alpha4)) SceneManager.LoadScene(3);
+        if (Input.GetKeyDown(KeyCode.Alpha5)) SceneManager.LoadScene(4);
     }
 
     private void LoadNextLevel() {
         transcendSound.Stop();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene((SceneManager.GetActiveScene().buildIndex + 1) % SceneManager.sceneCountInBuildSettings);
+
     }
 
     private void RotateHandler() {
@@ -130,5 +135,10 @@ public class Rocket : MonoBehaviour
         rigidBody.velocity = Vector3.zero;
         transform.SetPositionAndRotation(startPosition,startRotation);
         state = State.Alive;
+    }
+
+    private void toggleCollisions() {
+        if (collisionsDisabled) { collisionsDisabled = false; }
+        else { collisionsDisabled = true; }
     }
 }

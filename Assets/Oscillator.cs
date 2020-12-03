@@ -6,7 +6,7 @@ using UnityEngine;
 public class Oscillator : MonoBehaviour
 {
     private Vector3 startingPos;
-    [SerializeField] float oscillationSpeed;
+    [SerializeField] float oscillationSpeed, timeOffset;
     [SerializeField] Vector3 movementVector;
 
     // Start is called before the first frame update
@@ -16,6 +16,6 @@ public class Oscillator : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
-        transform.position = startingPos + ( Mathf.Sin(Time.time * oscillationSpeed) * movementVector );
+        transform.position = startingPos + ( Mathf.Sin( (Time.time * oscillationSpeed) + timeOffset) * movementVector );
     }
 }
